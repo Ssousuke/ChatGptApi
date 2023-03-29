@@ -8,4 +8,4 @@ Gere uma Chave e substitua no controller o valor "SECRET-KEY" pela chave gerada.
 | Referência | Link |
 | ------ | ------ |
 | Documentação OPENAI | [https://platform.openai.com/docs/introduction] |
-| Gerar um Chave | [https://beta.openai.com/account/api-keys][PlGh]] |
+| Gerar um Chave | [https://beta.openai.com/account/api-keys] |
