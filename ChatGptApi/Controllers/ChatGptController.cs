@@ -1,8 +1,8 @@
 using ChatGptApi.Dto;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace ChatGptApi.Controllers
 {
@@ -10,25 +10,31 @@ namespace ChatGptApi.Controllers
     [Route("[controller]")]
     public class ChatGptController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+        public ChatGptController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         [AcceptVerbs("GET", "POST")]
-        [Route("Chat/{message}")]
-        public async Task<string> PostGtp(string message)
+        [Route("Chat/{message?}")]
+        public async Task<ActionResult<string>> PostGtp(string? message)
         {
+            if (string.IsNullOrWhiteSpace(message))
+                return "Nenhum parametro passado.";
             var response = await GetChatGptResponse(message);
             return response;
         }
 
-        public async Task<string> GetChatGptResponse(string message)
+        public async Task<string> GetChatGptResponse(string? message)
         {
-            // 
-            string apiKey = "SECRET-KEY";
+            string? apiKey = _configuration.GetSection("ApiKey").Value;
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
-            string url = "https://api.openai.com/v1/completions";
+            string? url = _configuration.GetSection("OpenAIUrl").Value;
             string prompt = message;
             string payload = $@"{{                                
-                             ""model"": ""text-davinci-003"",
+                              ""model"": ""text-davinci-003"",
                               ""prompt"": ""{prompt}"",
                               ""max_tokens"": 500,
                               ""temperature"": 1.0,
